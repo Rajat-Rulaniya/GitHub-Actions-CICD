@@ -1,7 +1,10 @@
 name: Vprofile Actions
 on: workflow_dispatch
+env: 
+  AWS_REGION: us-east-1
+  ECS_REPO: vproapp/repo
 jobs:
-  Testing:
+  TESTING:
     runs-on: ubuntu-latest
     steps:
       - name: Code checkout
@@ -40,4 +43,32 @@ jobs:
           pollingTimeoutSec: 60
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONARCLOUD_HOST }}            
+          SONAR_HOST_URL: ${{ secrets.SONARCLOUD_HOST }}
+      
+  BUILD_AND_PUBLISH_IMAGE:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
+
+      - name: Update application.properties
+        run: |
+          sed -i "s/db01/${{ secrets.RDS_ENDPOINT }}/g" src/main/resources/application.properties
+          sed -i "s|admin123|${{ secrets.RDS_PASS }}|g" src/main/resources/application.properties
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_USER_ACCESS_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_USER_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+  
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.AWS_ECS_PUBLIC_REPO }}:latest -t ${{ secrets.AWS_ECS_PUBLIC_REPO }}:${{ github.run_number }} .
+          docker push ${{ secrets.AWS_ECS_PUBLIC_REPO }}:latest
+          docker push --all-tags ${{ secrets.AWS_ECS_PUBLIC_REPO }}
