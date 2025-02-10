@@ -69,6 +69,6 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.AWS_ECS_PUBLIC_REPO }}:latest -t ${{ secrets.AWS_ECS_PUBLIC_REPO }}:${{ github.run_number }} .
+          docker build -t ${{ secrets.AWS_ECS_PUBLIC_REPO }}:latest -t ${{ secrets.AWS_ECS_PUBLIC_REPO }}:Github-build-${{ github.run_number }} .
           docker push ${{ secrets.AWS_ECS_PUBLIC_REPO }}:latest
           docker push --all-tags ${{ secrets.AWS_ECS_PUBLIC_REPO }}
