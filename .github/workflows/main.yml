@@ -1,8 +1,5 @@
 name: Vprofile Actions
-on: 
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 env: 
   AWS_REGION: us-east-1
   ECS_REPO: vproapp/repo
