@@ -44,7 +44,7 @@ jobs:
             -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/
             -Dsonar.junit.reportsPath=target/surefire-reports/
             -Dsonar.jacoco.reportsPath=target/jacoco.exec
-
+      
       - name: SonarQube Quality Gate check
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
@@ -52,6 +52,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARCLOUD_HOST }}
+      
+      - name: Debug Quality Gate
+        run: |
+          curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=<your_project_key>" | jq .
+
       
   BUILD_AND_PUBLISH_IMAGE:
     runs-on: ubuntu-latest
