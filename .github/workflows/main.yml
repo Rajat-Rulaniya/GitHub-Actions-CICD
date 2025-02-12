@@ -31,7 +31,7 @@ jobs:
         run: mvn checkstyle:checkstyle
       
       - name: Setup SonarQube
-        uses: warchant/setup-sonar-scanner@v8
+        uses: warchant/setup-sonar-scanner@v7
       
       - name: Sonar Code Analysis
         run: sonar-scanner
