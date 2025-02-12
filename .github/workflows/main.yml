@@ -57,8 +57,8 @@ jobs:
         run: |
           sed -i "s/db01/${{ secrets.RDS_ENDPOINT }}/g" src/main/resources/application.properties
           sed -i "s|admin123|${{ secrets.RDS_PASS }}|g" src/main/resources/application.properties
-          grep -i "jdbc.url" src/main/resources/application.properties
-          grep "password"
+          
+          cat src/main/resources/application.properties
       
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
